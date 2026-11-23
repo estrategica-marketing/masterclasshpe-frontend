@@ -123,7 +123,7 @@ function Listado() {
          ) : (
             <div className="card overflow-hidden">
                <div className="overflow-x-auto">
-                  <table className="w-full min-w-[760px] text-left text-sm">
+                  <table className="w-full min-w-[880px] text-left text-sm">
                      <thead className="border-b border-line text-xs tracking-wide text-muted uppercase">
                         <tr>
                            <th className="px-4 py-3 font-medium">Participante</th>
@@ -131,6 +131,7 @@ function Listado() {
                            <th className="px-4 py-3 font-medium">Canal</th>
                            <th className="px-4 py-3 font-medium">Estatus</th>
                            <th className="px-4 py-3 font-medium">Registro</th>
+                           <th className="px-4 py-3 text-right font-medium">Acciones</th>
                         </tr>
                      </thead>
                      <tbody className={`stagger divide-y divide-line transition-opacity duration-300 ${cargando ? "opacity-40" : ""}`}>
@@ -155,11 +156,16 @@ function Listado() {
                                  {!p.activo && <Badge tono="red">Inactivo</Badge>}
                               </td>
                               <td className="px-4 py-3 text-xs text-muted">{fecha(p.created_at)}</td>
+                              <td className="px-4 py-3 text-right">
+                                 <a href={`/admin/participante?id=${p.id_user}`} className="btn btn-secondary btn-sm whitespace-nowrap">
+                                    Ver / Editar
+                                 </a>
+                              </td>
                            </tr>
                         ))}
                         {!items.length && (
                            <tr>
-                              <td colSpan={5} className="px-4 py-12 text-center text-muted">
+                              <td colSpan={6} className="px-4 py-12 text-center text-muted">
                                  No hay participantes con estos filtros.
                               </td>
                            </tr>
