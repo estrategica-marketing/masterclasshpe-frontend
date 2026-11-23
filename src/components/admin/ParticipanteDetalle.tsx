@@ -16,6 +16,9 @@ function Contenido({ id }: { id: number }) {
    const [error, setError] = useState<string | null>(null);
    const [aviso, setAviso] = useState<string | null>(null);
    const [editando, setEditando] = useState(false);
+   const [reenviando, setReenviando] = useState(false);
+   // Error de una acción (reenviar): se muestra sin reemplazar la ficha, a diferencia de `error` (carga).
+   const [accionError, setAccionError] = useState<string | null>(null);
 
    const cargar = useCallback(() => {
       api<Detalle>(`/admin/participantes/${id}`)
@@ -35,6 +38,19 @@ function Contenido({ id }: { id: number }) {
          setAviso(p.activo ? "Participante desactivado: se cerraron sus sesiones." : "Participante activado.");
       } catch (e) {
          setError(mensajeError(e));
+      }
+   };
+   const reenviarActivacion = async () => {
+      setAccionError(null);
+      setAviso(null);
+      setReenviando(true);
+      try {
+         const { email } = await api<{ email: string }>(`/admin/participantes/${id}/reenviar-activacion`, "POST");
+         setAviso(`Correo de activación reenviado a ${email}. El enlace anterior ya no sirve; el nuevo vence en 48 horas.`);
+      } catch (e) {
+         setAccionError(mensajeError(e));
+      } finally {
+         setReenviando(false);
       }
    };
    const datos: [string, string][] = [
@@ -59,6 +75,11 @@ function Contenido({ id }: { id: number }) {
             titulo={p.nombre_completo ?? p.email}
             acciones={
                <>
+                  {!p.email_verificado_at && p.activo && (
+                     <button onClick={reenviarActivacion} disabled={reenviando} className="btn btn-secondary btn-sm">
+                        {reenviando ? "Enviando…" : "Reenviar activación"}
+                     </button>
+                  )}
                   <button onClick={() => setEditando(true)} className="btn btn-secondary btn-sm">
                      Editar
                   </button>
@@ -75,6 +96,11 @@ function Contenido({ id }: { id: number }) {
          {aviso && (
             <div className="mb-4">
                <Alert tipo="info">{aviso}</Alert>
+            </div>
+         )}
+         {accionError && (
+            <div className="mb-4">
+               <Alert tipo="error">{accionError}</Alert>
             </div>
          )}
          <div className="max-w-3xl">

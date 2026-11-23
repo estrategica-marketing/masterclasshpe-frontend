@@ -7,7 +7,7 @@ import { Alert } from "../ui/Alert";
 
 interface Props {
    usuario: Usuario;
-   // Ruta PUT: "/perfil" (participante) o "/admin/participantes/:id" (admin).
+   // Ruta PUT: "/admin/participantes/:id".
    ruta: string;
    editarEmail?: boolean;
    onGuardado: (u: Usuario) => void;
@@ -25,7 +25,7 @@ const campos = (u: Usuario) => ({
    idioma: u.idioma,
 });
 
-// Formulario reutilizado por el participante (Mi cuenta) y el admin (detalle de participante).
+// Formulario de edición del admin (detalle de participante). El participante sólo ve sus datos (CuentaApp).
 export function PerfilForm({ usuario, ruta, editarEmail = false, onGuardado }: Props) {
    const [d, setD] = useState(campos(usuario));
    const [estado, setEstado] = useState<{ tipo: "error" | "success"; msg: string } | null>(null);
@@ -61,7 +61,6 @@ export function PerfilForm({ usuario, ruta, editarEmail = false, onGuardado }: P
                value={d.email}
                onChange={set("email")}
                disabled={!editarEmail}
-               hint={!editarEmail ? "Para cambiar tu correo contacta al administrador." : undefined}
             />
             <Input label="Empresa / Integrador" value={d.empresa} onChange={set("empresa")} maxLength={150} />
             <Select label="Puesto" value={d.puesto} onChange={set("puesto")}>
